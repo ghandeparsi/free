@@ -12,7 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 329
+    timeout-minutes: 359
 
     steps:
       - name: 1. Prepare Ubuntu
@@ -99,7 +99,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          for i in $(seq 1 330); do
-            echo "[$i/330] Ubuntu runner is active"
+          for i in $(seq 1 370); do
+            echo "[$i/370] Ubuntu runner is active"
             sleep 60
           done
