@@ -1,12 +1,8 @@
 name: Ubuntu Tailscale Exit Node
-
-concurrency:
-  group: my-server-group
-  cancel-in-progress: true
-  
+ 
 on:
   schedule:
-    - cron: '03 3,9,15,21 * * *'
+    - cron: '37 6,12,18,00 * * *'
       timezone: 'Asia/Tehran'
   workflow_dispatch:
 
