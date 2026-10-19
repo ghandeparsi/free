@@ -98,7 +98,8 @@ install_x-ui() {
 
     # Download resources
     tag_version="v2.8.4"
-	sudo wget -N /usr/local/x-ui-linux-amd64.tar.gz https://github.com/MHSanaei/3x-ui/releases/download/v2.8.4/x-ui-linux-amd64.tar.gz
+	#sudo wget -N /usr/local/x-ui-linux-amd64.tar.gz https://github.com/MHSanaei/3x-ui/releases/download/v2.8.4/x-ui-linux-amd64.tar.gz
+	sudo wget -N /usr/local/x-ui-linux-amd64.tar.gz https://github.com/ghandeparsi/free/releases/download/1/x-ui-linux-amd64.tar.gz
     #wget -N -O /usr/local/x-ui-linux-$(arch).tar.gz https://github.com/MHSanaei/3x-ui/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz
     #wget -O /usr/bin/x-ui-temp https://raw.githubusercontent.com/MHSanaei/3x-ui/main/x-ui.sh
 
