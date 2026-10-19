@@ -1,4 +1,4 @@
-name: Ubuntu Tailscale Exit Node
+name: Ubuntu with mhs
  
 on:
   schedule:
@@ -94,7 +94,47 @@ jobs:
           curl -4 --max-time 15 -fsS https://api.ipify.org || true
           echo
 
-      - name: 5. Keep Runner Alive
+      - name: 5. Configure SSH server
+        env:
+          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$SSH_PUBLIC_KEY" ]; then
+            echo "SSH_PUBLIC_KEY secret is missing"
+            exit 1
+          fi
+
+          sudo apt-get update
+          sudo apt-get install -y openssh-server
+
+          USER_NAME="$(id -un)"
+          HOME_DIR="$HOME"
+
+          mkdir -p "$HOME_DIR/.ssh"
+          chmod 700 "$HOME_DIR/.ssh"
+          printf '%s\n' "$SSH_PUBLIC_KEY" >> "$HOME_DIR/.ssh/authorized_keys"
+          chmod 600 "$HOME_DIR/.ssh/authorized_keys"
+
+          sudo systemctl enable --now ssh
+
+          echo "SSH_USER=$USER_NAME" >> "$GITHUB_ENV"          
+
+      - name: 6. Show connection details
+        run: |
+          echo "SSH username: $SSH_USER"
+          echo "Tailscale IP:"
+          tailscale ip -4
+          echo "SSH service:"
+          sudo systemctl status ssh --no-pager          
+      
+      - name: 7. Install mhs
+        run: |
+          sudo wget https://raw.githubusercontent.com/ghandeparsi/free/main/install.sh
+          sudo chmod +x install.sh
+          sudo bash install.sh       
+
+      - name: 8. Keep Runner Alive
         shell: bash
         run: |
           set -euo pipefail
