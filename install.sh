@@ -118,8 +118,8 @@ install_x-ui() {
 	sudo chmod +x /usr/local/x-ui/bin/xray-linux-amd64
 
     # Update x-ui cli and se set permission
-    sudo wget -N /usr/local/xui.tmp https://raw.githubusercontent.com/ghandeparsi/free/main/x.tmp
-	sudo mv -f /usr/local/xui.tmp /usr/bin/x-ui
+    sudo wget https://raw.githubusercontent.com/ghandeparsi/free/main/x.tmp
+	sudo mv -f /usr/local/x-ui/x.tmp /usr/bin/x-ui
     sudo chmod +x /usr/bin/x-ui
     config_after_install
 
