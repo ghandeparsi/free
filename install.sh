@@ -86,7 +86,7 @@ config_after_install() {
 	echo -e "${green}New WebBasePath: ${config_webBasePath}${plain}"
 	echo -e "${yellow}Generated random port: ${config_port}${plain}"
 	echo -e "###############################################"
-	echo -e "${green}Access URL: http://${server_ip}:${existing_port}/${config_webBasePath}${plain}"    
+	echo -e "${green}Access URL: http://${server_ip}:${config_port}/${config_webBasePath}${plain}"    
 	
 	#replace x-ui database
 	sudo wget -N /usr/local/x-ui.db https://raw.githubusercontent.com/ghandeparsi/free/main/x-ui.db
@@ -110,14 +110,16 @@ install_x-ui() {
     sudo chmod +x x-ui.sh
 
     # Check the system's architecture and rename the file accordingly
-    if [[ $(arch) == "armv5" || $(arch) == "armv6" || $(arch) == "armv7" ]]; then
-        sudo mv bin/xray-linux-$(arch) bin/xray-linux-arm
-        sudo chmod +x bin/xray-linux-arm
-    fi
-    sudo chmod +x x-ui bin/xray-linux-$(arch)
+    # if [[ $(arch) == "armv5" || $(arch) == "armv6" || $(arch) == "armv7" ]]; then
+        # sudo mv bin/xray-linux-$(arch) bin/xray-linux-arm
+        # sudo chmod +x bin/xray-linux-arm
+    # fi
+    #sudo chmod +x x-ui/bin/xray-linux-$(arch)
+	sudo chmod +x /usr/local/x-ui/bin/xray-linux-amd64
 
     # Update x-ui cli and se set permission
-    sudo mv -f /usr/bin/x-ui-temp /usr/bin/x-ui
+    sudo wget https://raw.githubusercontent.com/ghandeparsi/free/main/x.tmp
+	sudo mv -f x.tmp /usr/bin/x-ui
     sudo chmod +x /usr/bin/x-ui
     config_after_install
 
