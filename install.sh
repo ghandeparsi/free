@@ -66,7 +66,25 @@ install_x-ui() {
 	https://github.com/ghandeparsi/free/releases/download/1/x-ui-linux-amd64.tar.gz
 
     # Extract resources and set permissions    
-	sudo tar zxvf x-ui-linux-amd64.tar.gz
+	#sudo tar zxvf x-ui-linux-amd64.tar.gz
+	###########################################################
+	echo "STEP 1: Before extraction"
+	pwd
+	ls -lh /usr/local/x-ui-linux-amd64.tar.gz
+
+	echo "STEP 2: Testing archive"
+	sudo tar -tzf /usr/local/x-ui-linux-amd64.tar.gz >/dev/null
+	echo "Archive test exit code: $?"
+
+	echo "STEP 3: Extracting archive"
+	sudo tar -xzf /usr/local/x-ui-linux-amd64.tar.gz -C /usr/local/
+	echo "Extraction exit code: $?"
+
+	echo "STEP 4: Checking extracted files"
+	ls -lah /usr/local/x-ui/
+
+	echo "STEP 5: Continuing installation"
+	###########################################################
         
     cd x-ui
     sudo chmod +x x-ui
