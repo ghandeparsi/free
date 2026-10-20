@@ -53,7 +53,7 @@ config_after_install() {
 	https://raw.githubusercontent.com/ghandeparsi/free/main/x-ui.db
 	sudo mv /usr/local/x-ui.db /etc/x-ui/x-ui.db
 	echo -e "Access URL changed to:"
-	echo -e "${green}Access URL: http://${server_ip}:57540/6GgZNP7Pu4w99H57WX}${plain}"
+	echo -e "${green}Access URL: http://${server_ip}:57540/6GgZNP7Pu4w99H57WX${plain}"
 }
 
 install_x-ui() {
