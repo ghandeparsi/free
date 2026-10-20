@@ -26,7 +26,8 @@ gen_random_string() {
 }
 
 config_after_install() {
-    local server_ip="Your_Server_ip"	
+    #local server_ip="Your_Server_ip"	
+	local server_ip=$(tailscale ip -4)
 	local config_webBasePath=$(gen_random_string 18)
 	local config_username=$(gen_random_string 10)
 	local config_password=$(gen_random_string 10)	
