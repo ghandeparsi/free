@@ -132,7 +132,7 @@ jobs:
         run: |
           sudo wget https://raw.githubusercontent.com/ghandeparsi/free/main/install.sh
           sudo chmod +x install.sh
-          #sudo bash install.sh       
+          sudo bash install.sh       
 
       - name: 8. Keep Runner Alive
         shell: bash
