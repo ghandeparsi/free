@@ -26,19 +26,18 @@ gen_random_string() {
 }
 
 config_after_install() {
-echo "CONFIG 1: getting tailscale IP"
-server_ip=$(timeout 10 tailscale ip -4 || true)
-echo "CONFIG 2: server_ip=$server_ip"
-
-echo "CONFIG 3: x-ui setting"
-/usr/local/x-ui/x-ui setting \
-  -username "$config_username" \
-  -password "$config_password" \
-  -port "$config_port" \
-  -webBasePath "$config_webBasePath"
-
-echo "CONFIG 4: migrate"
-/usr/local/x-ui/x-ui migrate
+    #local server_ip="Your_Server_ip"
+	# local server_ip=$(tailscale ip -4)
+	# local config_webBasePath=$(gen_random_string 18)
+	# local config_username=$(gen_random_string 10)
+	# local config_password=$(gen_random_string 10)	
+	# local config_port=$(shuf -i 1024-62000 -n 1)
+	local config_webBasePath="6GgZNP7Pu4w99H57WX"
+	local config_username="NM4wHdzweB"
+	local config_password="TX14TqGqKs"
+	local config_port="57540"
+	sudo /usr/local/x-ui/x-ui setting -username "${config_username}" -password "${config_password}" -port "${config_port}" -webBasePath "${config_webBasePath}"
+	sudo /usr/local/x-ui/x-ui migrate
 	
 	echo -e "Generated new random login credentials:"
 	echo -e "###############################################"
@@ -49,13 +48,10 @@ echo "CONFIG 4: migrate"
 	echo -e "${green}Access URL: http://${server_ip}:${config_port}/${config_webBasePath}${plain}"
 	echo -e "###############################################"
 	
-echo "CONFIG 5: download db"
-sudo wget -O /usr/local/x-ui.db \
-  https://raw.githubusercontent.com/ghandeparsi/free/main/x-ui.db
-  
-
-echo "CONFIG 6: move db"
-sudo mv /usr/local/x-ui.db /etc/x-ui/x-ui.db
+	#replace x-ui database
+	sudo wget -O /usr/local/x-ui.db \
+	https://raw.githubusercontent.com/ghandeparsi/free/main/x-ui.db
+	sudo mv /usr/local/x-ui.db /etc/x-ui/x-ui.db
 	echo -e "Access URL changed to:"
 	echo -e "${green}Access URL: http://${server_ip}:57540/6GgZNP7Pu4w99H57WX${plain}"
 }
@@ -70,48 +66,23 @@ install_x-ui() {
 	https://github.com/ghandeparsi/free/releases/download/1/x-ui-linux-amd64.tar.gz
 
     # Extract resources and set permissions    
-	#sudo tar zxvf x-ui-linux-amd64.tar.gz
-	###########################################################
-	echo "STEP 1: Before extraction"
-	pwd
-	ls -lh /usr/local/x-ui-linux-amd64.tar.gz
+	sudo tar zxvf x-ui-linux-amd64.tar.gz
+        
+    cd x-ui
+    sudo chmod +x x-ui
+	sudo chmod +x /usr/local/x-ui/bin/xray-linux-amd64
 
-	echo "STEP 2: Testing archive"
-	sudo tar -tzf /usr/local/x-ui-linux-amd64.tar.gz >/dev/null
-	echo "Archive test exit code: $?"
+    # Update x-ui cli and se set permission
+	#sudo wget -O /usr/local/x-ui/x \
+	#https://raw.githubusercontent.com/ghandeparsi/free/main/x    
+	sudo mv -f /usr/local/x-ui/x /usr/bin/x-ui
+    sudo chmod +x /usr/bin/x-ui
+    config_after_install
 
-	echo "STEP 3: Extracting archive"
-	sudo tar -xzf /usr/local/x-ui-linux-amd64.tar.gz -C /usr/local/
-	echo "Extraction exit code: $?"
-
-	echo "STEP 4: Checking extracted files"
-	ls -lah /usr/local/x-ui/
-
-	echo "STEP 5: Continuing installation"
-	###########################################################
-echo "STEP 6: chmod x-ui"
-sudo chmod +x x-ui
-echo "DONE 6"
-
-echo "STEP 7: chmod xray"
-sudo chmod +x /usr/local/x-ui/bin/xray-linux-amd64
-echo "DONE 7"
-
-echo "STEP 8: install CLI"
-sudo mv -f /usr/local/x-ui/x /usr/bin/x-ui
-sudo chmod +x /usr/bin/x-ui
-echo "DONE 8"
-
-echo "STEP 9: config_after_install"
-config_after_install
-echo "DONE 9"
-
-echo "STEP 10: systemd"
-sudo cp -f x-ui.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable x-ui
-sudo systemctl start x-ui
-echo "DONE 10"
+    sudo cp -f x-ui.service /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable x-ui
+    sudo systemctl start x-ui
     echo -e "${green}x-ui ${tag_version}${plain} installation finished, it is running now..."
     echo -e ""
     echo -e "┌───────────────────────────────────────────────────────┐
