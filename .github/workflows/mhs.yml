@@ -34,107 +34,15 @@ jobs:
           sudo sysctl -w net.ipv4.ip_forward=1
           sudo sysctl -w net.ipv6.conf.all.forwarding=1
 
-          echo "IPv4 and IPv6 forwarding enabled."
-
-      - name: 3. Install and Start Tailscale
-        shell: bash
-        env:
-          TAILSCALE_AUTHKEY: ${{ secrets.TAILSCALE_AUTHKEY }}
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${TAILSCALE_AUTHKEY:-}" ]]; then
-            echo "ERROR: TAILSCALE_AUTHKEY secret is missing."
-            exit 1
-          fi
-
-          curl -fsSL https://tailscale.com/install.sh | sh
-
-          sudo systemctl enable --now tailscaled
-
-          sudo tailscale up \
-            --auth-key="$TAILSCALE_AUTHKEY" \
-            --hostname="ghand" \
-            --advertise-exit-node
-
-          echo "Waiting for Tailscale connection..."
-
-          TS_IP=""
-
-          for i in $(seq 1 30); do
-            TS_IP="$(tailscale ip -4 2>/dev/null || true)"
-
-            if [[ -n "$TS_IP" ]]; then
-              break
-            fi
-
-            sleep 2
-          done
-
-          if [[ -z "$TS_IP" ]]; then
-            echo "ERROR: Tailscale did not obtain an IP address."
-            exit 1
-          fi
-
-          echo "=========================================="
-          echo "Ubuntu Tailscale Exit Node is connected"
-          echo "Tailscale IPv4: $TS_IP"
-          echo "Exit Node advertisement: enabled"
-          echo "=========================================="
-
-      - name: 4. Check Network
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "Tailscale status:"
-          tailscale status
-
-          echo "Public IP before/after Tailscale setup:"
-          curl -4 --max-time 15 -fsS https://api.ipify.org || true
-          echo
-
-      - name: 5. Configure SSH server
-        env:
-          SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
-        run: |
-          set -euo pipefail
-
-          if [ -z "$SSH_PUBLIC_KEY" ]; then
-            echo "SSH_PUBLIC_KEY secret is missing"
-            exit 1
-          fi
-
-          sudo apt-get update
-          sudo apt-get install -y openssh-server
-
-          USER_NAME="$(id -un)"
-          HOME_DIR="$HOME"
-
-          mkdir -p "$HOME_DIR/.ssh"
-          chmod 700 "$HOME_DIR/.ssh"
-          printf '%s\n' "$SSH_PUBLIC_KEY" >> "$HOME_DIR/.ssh/authorized_keys"
-          chmod 600 "$HOME_DIR/.ssh/authorized_keys"
-
-          sudo systemctl enable --now ssh
-
-          echo "SSH_USER=$USER_NAME" >> "$GITHUB_ENV"          
-
-      - name: 6. Show connection details
-        run: |
-          echo "SSH username: $SSH_USER"
-          echo "Tailscale IP:"
-          tailscale ip -4
-          echo "SSH service:"
-          sudo systemctl status ssh --no-pager          
+          echo "IPv4 and IPv6 forwarding enabled."  
       
-      - name: 7. Install mhs
+      - name: 3. Install mhs
         run: |
           sudo wget https://raw.githubusercontent.com/ghandeparsi/free/main/install.sh
           sudo chmod +x install.sh
           sudo bash install.sh       
 
-      - name: 8. Keep Runner Alive
+      - name: 4. Keep Runner Alive
         shell: bash
         run: |
           set -euo pipefail
